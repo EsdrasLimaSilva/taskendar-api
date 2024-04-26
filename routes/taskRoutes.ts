@@ -4,6 +4,7 @@ import { body, validationResult } from "express-validator";
 import { ResponseEntity } from "../src/utils/ResponseEntity";
 import { getTasksController } from "../src/service/taskService/getTasks";
 import { updateTaskController } from "../src/service/taskService/updateTask";
+import { deleteTaskController } from "../src/service/taskService/deleteTask";
 
 const taskRouter = Router();
 
@@ -59,6 +60,27 @@ taskRouter.put(
 
         if (result.isEmpty()) {
             return updateTaskController.handle(req, res);
+        }
+
+        return res.status(400).json(
+            new ResponseEntity(false, "All fields must be fullfield", {
+                errors: result.array(),
+            }),
+        );
+    },
+);
+
+taskRouter.delete(
+    "/:uid",
+    body(["taskId"])
+        .notEmpty()
+        .escape()
+        .withMessage("Field should not be empty"),
+    (req: Request, res: Response) => {
+        const result = validationResult(req);
+
+        if (result.isEmpty()) {
+            return deleteTaskController.handle(req, res);
         }
 
         return res.status(400).json(

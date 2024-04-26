@@ -81,4 +81,15 @@ export class PostgresTaskRepository implements TaskRepository {
 
         tsk.update({ ...task, uid });
     }
+
+    async deleteOne(uid: string, taskId: string): Promise<void> {
+        const tsk = await TaskModel.findByPk(taskId);
+        if (!tsk) throw new Error("Task not found!");
+
+        const ownerId = await tsk.getDataValue("uid");
+        if (uid !== ownerId)
+            throw new Error("User not allowed to update the task!");
+
+        await tsk.destroy();
+    }
 }
