@@ -2,9 +2,12 @@
     "compilerOptions": {
         "target": "es2016",
         "module": "commonjs",
+        "resolveJsonModule": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "strict": true,
-        "skipLibCheck": true
-    }
+        "skipLibCheck": true,
+        "types": ["jest", "node"]
+    },
+    "exclude": ["node_modules"]
 }

@@ -1,0 +1,11 @@
+name: dieltest
+services:
+    postgres:
+        image: postgres:15
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        volumes:
+            - $HOME/volumes/dielpg:/var/lib/postgresql
+        ports:
+            - 5432:5432
