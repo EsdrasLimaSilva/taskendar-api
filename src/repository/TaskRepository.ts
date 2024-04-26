@@ -1,7 +1,8 @@
+import { CreateTaskDTO } from "../dto/CreateTaskDTO";
 import { TaskDTO } from "../dto/TaskDTO";
 
 export interface TaskRepository {
-    save(task: TaskDTO): Promise<void>;
+    save(task: CreateTaskDTO): Promise<void>;
     findOne(taskId: string): Promise<TaskDTO | null>;
     findMany(
         username: string,
@@ -9,4 +10,5 @@ export interface TaskRepository {
         offset: number,
         limit: number,
     ): Promise<TaskDTO[]>;
+    updateOne(uid: string, task: TaskDTO): Promise<void>;
 }

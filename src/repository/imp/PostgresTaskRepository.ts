@@ -3,13 +3,14 @@ import { TaskDTO } from "../../dto/TaskDTO";
 import { TaskModel } from "../../model/TaskModel";
 import { TaskRepository } from "../TaskRepository";
 import { Op } from "sequelize";
+import { CreateTaskDTO } from "../../dto/CreateTaskDTO";
 
 export class PostgresTaskRepository implements TaskRepository {
-    async save(task: TaskDTO): Promise<void> {
+    async save(task: CreateTaskDTO): Promise<void> {
         await TaskModel.sync();
-        task._id = uuid();
+        const newTask: TaskDTO = { ...task, _id: uuid() };
         await TaskModel.create({
-            ...task,
+            ...newTask,
             startsAt: new Date(task.startsAt),
             endsAt: new Date(task.endsAt),
         });
@@ -66,5 +67,18 @@ export class PostgresTaskRepository implements TaskRepository {
         );
 
         return [...tasksDTO];
+    }
+
+    async updateOne(uid: string, task: TaskDTO): Promise<void> {
+        TaskModel.sync();
+
+        const tsk = await TaskModel.findByPk(task._id);
+        if (!tsk) throw new Error("Task not found!");
+
+        const ownerId = await tsk.getDataValue("uid");
+        if (uid !== ownerId)
+            throw new Error("User not allowed to update the task!");
+
+        tsk.update({ ...task, uid });
     }
 }

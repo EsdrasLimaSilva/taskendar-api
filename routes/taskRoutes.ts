@@ -3,6 +3,7 @@ import { createTaskController } from "../src/service/taskService/createTask";
 import { body, validationResult } from "express-validator";
 import { ResponseEntity } from "../src/utils/ResponseEntity";
 import { getTasksController } from "../src/service/taskService/getTasks";
+import { updateTaskController } from "../src/service/taskService/updateTask";
 
 const taskRouter = Router();
 
@@ -39,13 +40,32 @@ taskRouter.get(
 
         if (result.isEmpty()) return getTasksController.handle(req, res);
 
-        return res
-            .status(400)
-            .json(
-                new ResponseEntity(false, "Invalid body", {
-                    error: result.array(),
-                }),
-            );
+        return res.status(400).json(
+            new ResponseEntity(false, "Invalid body", {
+                error: result.array(),
+            }),
+        );
+    },
+);
+
+taskRouter.put(
+    "/:uid",
+    body(["_id", "uid", "title", "description", "startsAt", "endsAt"])
+        .notEmpty()
+        .escape()
+        .withMessage("Fields Cannot be empty"),
+    (req: Request, res: Response) => {
+        const result = validationResult(req);
+
+        if (result.isEmpty()) {
+            return updateTaskController.handle(req, res);
+        }
+
+        return res.status(400).json(
+            new ResponseEntity(false, "All fields must be fullfield", {
+                errors: result.array(),
+            }),
+        );
     },
 );
 
