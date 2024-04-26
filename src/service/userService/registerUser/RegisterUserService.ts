@@ -9,6 +9,6 @@ export class RegisterUserService {
             throw new Error("User already registered");
         }
 
-        // await this.userRepository.save(user);
+        await this.userRepository.save(user);
     }
 }

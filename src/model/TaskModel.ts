@@ -26,12 +26,12 @@ TaskModel.init(
         },
 
         startsAt: {
-            type: DataTypes.STRING,
+            type: DataTypes.DATE,
             allowNull: false,
         },
 
         endsAt: {
-            type: DataTypes.STRING,
+            type: DataTypes.DATE,
             allowNull: false,
         },
     },

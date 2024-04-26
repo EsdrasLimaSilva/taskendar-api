@@ -14,7 +14,7 @@ export class CreateTaskController {
             return res
                 .status(201)
                 .json(
-                    new ResponseEntity(false, "Task created successfully!", {}),
+                    new ResponseEntity(true, "Task created successfully!", {}),
                 );
         } catch (e) {
             const error = e as Error;

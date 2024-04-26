@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import { createTaskController } from "../src/service/taskService/createTask";
 import { body, validationResult } from "express-validator";
 import { ResponseEntity } from "../src/utils/ResponseEntity";
+import { getTasksController } from "../src/service/taskService/getTasks";
 
 const taskRouter = Router();
 
@@ -25,5 +26,9 @@ taskRouter.post(
         );
     },
 );
+
+taskRouter.get("/:uid", (req: Request, res: Response) => {
+    return getTasksController.handle(req, res);
+});
 
 export { taskRouter };

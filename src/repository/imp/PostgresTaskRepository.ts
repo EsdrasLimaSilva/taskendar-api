@@ -22,6 +22,38 @@ export class PostgresTaskRepository implements TaskRepository {
     async save(task: TaskDTO): Promise<void> {
         await TaskModel.sync();
         task._id = uuid();
-        await TaskModel.create({ ...task });
+        await TaskModel.create({
+            ...task,
+            startsAt: new Date(task.startsAt),
+            endsAt: new Date(task.endsAt),
+        });
+    }
+
+    async findMany(
+        uid: string,
+        offset: number = 0,
+        limit: number = 15,
+    ): Promise<TaskDTO[]> {
+        await TaskModel.sync();
+        const tasks = await TaskModel.findAll({
+            where: { uid },
+            order: ["startsAt"],
+            offset: offset * limit,
+            limit: limit,
+        });
+
+        const tasksDTO = tasks.map(
+            (tsk) =>
+                new TaskDTO(
+                    tsk.getDataValue("uid"),
+                    tsk.getDataValue("title"),
+                    tsk.getDataValue("description"),
+                    tsk.getDataValue("startsAt"),
+                    tsk.getDataValue("endsAt"),
+                    tsk.getDataValue("_id"),
+                ),
+        );
+
+        return [...tasksDTO];
     }
 }
