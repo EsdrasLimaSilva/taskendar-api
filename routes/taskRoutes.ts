@@ -27,8 +27,26 @@ taskRouter.post(
     },
 );
 
-taskRouter.get("/:uid", (req: Request, res: Response) => {
-    return getTasksController.handle(req, res);
-});
+//TODO: uid should be get by the auth token not in the url
+taskRouter.get(
+    "/:uid",
+    body(["startDate"])
+        .notEmpty()
+        .escape()
+        .withMessage("startDate must be informed"),
+    (req: Request, res: Response) => {
+        const result = validationResult(req);
+
+        if (result.isEmpty()) return getTasksController.handle(req, res);
+
+        return res
+            .status(400)
+            .json(
+                new ResponseEntity(false, "Invalid body", {
+                    error: result.array(),
+                }),
+            );
+    },
+);
 
 export { taskRouter };

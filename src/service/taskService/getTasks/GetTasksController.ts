@@ -7,11 +7,14 @@ export class GetTasksController {
 
     async handle(req: Request, res: Response) {
         try {
+            // unpacking variables
+            const { startDate } = req.body as { startDate: string };
             const { page, limit } = req.query;
             const uid = req.params.uid;
 
             const tasks = await this.getTasksService.execute(
                 uid,
+                startDate,
                 page ? Number(page) : undefined,
                 limit ? Number(limit) : undefined,
             );
