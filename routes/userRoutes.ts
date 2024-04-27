@@ -2,8 +2,13 @@ import { Request, Response, Router } from "express";
 import { body, validationResult } from "express-validator";
 import { registerUserController } from "../src/service/userService/registerUser";
 import { ResponseEntity } from "../src/utils/ResponseEntity";
+import { getUserDataController } from "../src/service/userService/getUserData";
 
 const userRouter = Router();
+
+userRouter.get("/", (req: Request, res: Response) => {
+    return getUserDataController.handle(req, res);
+});
 
 userRouter.post(
     "/",

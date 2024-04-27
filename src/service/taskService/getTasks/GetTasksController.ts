@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { GetTasksService } from "./GetTasksService";
 import { ResponseEntity } from "../../../utils/ResponseEntity";
+import { ApiUtils } from "../../../utils/ApiUtils";
 
 export class GetTasksController {
     constructor(private getTasksService: GetTasksService) {}
@@ -8,9 +9,12 @@ export class GetTasksController {
     async handle(req: Request, res: Response) {
         try {
             // unpacking variables
-            const { startDate } = req.body as { startDate: string };
+            const startDate = req.headers["startdate"] as string;
+
             const { page, limit } = req.query;
-            const uid = req.params.uid;
+
+            //retrieveing user id
+            const uid = ApiUtils.getUserIdFromRequest(req);
 
             const tasks = await this.getTasksService.execute(
                 uid,

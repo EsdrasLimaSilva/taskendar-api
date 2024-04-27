@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { CreateTaskService } from "./CreateTaskService";
 import { TaskDTO } from "../../../dto/TaskDTO";
 import { ResponseEntity } from "../../../utils/ResponseEntity";
+import { ApiUtils } from "../../../utils/ApiUtils";
 
 export class CreateTaskController {
     constructor(private createTaskService: CreateTaskService) {}
@@ -9,7 +10,8 @@ export class CreateTaskController {
     async handle(req: Request, res: Response) {
         try {
             const task = req.body as TaskDTO;
-            await this.createTaskService.execute(task);
+            const uid = ApiUtils.getUserIdFromRequest(req);
+            await this.createTaskService.execute(uid, task);
 
             return res
                 .status(201)

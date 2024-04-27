@@ -6,9 +6,9 @@ import { Op } from "sequelize";
 import { CreateTaskDTO } from "../../dto/CreateTaskDTO";
 
 export class PostgresTaskRepository implements TaskRepository {
-    async save(task: CreateTaskDTO): Promise<void> {
+    async save(uid: string, task: CreateTaskDTO): Promise<void> {
         await TaskModel.sync();
-        const newTask: TaskDTO = { ...task, _id: uuid() };
+        const newTask: TaskDTO = { ...task, _id: uuid(), uid };
         await TaskModel.create({
             ...newTask,
             startsAt: new Date(task.startsAt),

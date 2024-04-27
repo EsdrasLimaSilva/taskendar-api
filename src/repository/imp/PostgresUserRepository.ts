@@ -4,9 +4,9 @@ import { UserModel } from "../../model/UserModel";
 import { UserRepository } from "../UserRepository";
 
 export class PostgresUserRepository implements UserRepository {
-    async save(user: UserDTO): Promise<void> {
+    async save(userId: string, user: UserDTO): Promise<void> {
         await UserModel.sync();
-        user._id = uuid();
+        user._id = userId;
 
         UserModel.create({ ...user });
     }
