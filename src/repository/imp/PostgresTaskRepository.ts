@@ -76,7 +76,7 @@ export class PostgresTaskRepository implements TaskRepository {
         return [...tasksDTO];
     }
 
-    async updateOne(uid: string, task: TaskDTO): Promise<void> {
+    async updateOne(uid: string, task: TaskDTO): Promise<TaskDTO> {
         TaskModel.sync();
 
         const tsk = await TaskModel.findByPk(task._id);
@@ -86,7 +86,16 @@ export class PostgresTaskRepository implements TaskRepository {
         if (uid !== ownerId)
             throw new Error("User not allowed to update the task!");
 
-        tsk.update({ ...task, uid });
+        const updatedTask = await tsk.update({ ...task, uid });
+
+        return new TaskDTO(
+            updatedTask.getDataValue("uid"),
+            updatedTask.getDataValue("title"),
+            updatedTask.getDataValue("description"),
+            updatedTask.getDataValue("startsAt"),
+            updatedTask.getDataValue("endsAt"),
+            updatedTask.getDataValue("_id"),
+        );
     }
 
     async deleteOne(uid: string, taskId: string): Promise<void> {

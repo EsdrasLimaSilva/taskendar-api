@@ -49,7 +49,7 @@ taskRouter.get(
 
 taskRouter.put(
     "/",
-    body(["_id", "uid", "title", "description", "startsAt", "endsAt"])
+    body(["_id", "title", "description", "startsAt", "endsAt"])
         .notEmpty()
         .escape()
         .withMessage("Fields Cannot be empty"),

@@ -9,16 +9,23 @@ export class UpdateTaskController {
 
     async handle(req: Request, res: Response) {
         try {
-            const updatedTask = req.body as TaskDTO;
+            const targetTask = req.body as TaskDTO;
 
             // getting user id
             const uid = ApiUtils.getUserIdFromRequest(req);
 
-            await this.updateTaskService.execute(uid, updatedTask);
+            const updatedTask = await this.updateTaskService.execute(
+                uid,
+                targetTask,
+            );
 
             return res
                 .status(200)
-                .json(new ResponseEntity(true, "Task updated", {}));
+                .json(
+                    new ResponseEntity(true, "Task updated", {
+                        task: updatedTask,
+                    }),
+                );
         } catch (e) {
             const error = e as Error;
 

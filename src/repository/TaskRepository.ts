@@ -10,6 +10,6 @@ export interface TaskRepository {
         offset: number,
         limit: number,
     ): Promise<TaskDTO[]>;
-    updateOne(uid: string, task: TaskDTO): Promise<void>;
+    updateOne(uid: string, task: TaskDTO): Promise<TaskDTO>;
     deleteOne(uid: string, taskId: string): Promise<void>;
 }
