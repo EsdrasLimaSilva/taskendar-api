@@ -6,7 +6,7 @@ export interface TaskRepository {
     findOne(taskId: string): Promise<TaskDTO | null>;
     findMany(
         username: string,
-        startDate: string,
+        { year, month }: { month: number; year: number },
         offset: number,
         limit: number,
     ): Promise<TaskDTO[]>;

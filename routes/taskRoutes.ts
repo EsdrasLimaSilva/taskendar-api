@@ -31,11 +31,13 @@ taskRouter.post(
 
 taskRouter.get(
     "/",
-    header(["startDate"])
+    header(["month", "year"])
         .notEmpty()
         .escape()
-        .withMessage("startDate must be informed"),
+        .withMessage("headers must be informed"),
     (req: Request, res: Response) => {
+        console.log(">>>>>>>", req.headers);
+
         const result = validationResult(req);
         if (result.isEmpty()) return getTasksController.handle(req, res);
 

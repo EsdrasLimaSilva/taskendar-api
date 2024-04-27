@@ -6,7 +6,7 @@ export class GetTasksService {
 
     async execute(
         username: string,
-        startDate: string,
+        { year, month }: { month: number; year: number },
         page: number = 1,
         limit: number = 15,
     ): Promise<TaskDTO[]> {
@@ -14,7 +14,7 @@ export class GetTasksService {
 
         const tasks = await this.taskRepository.findMany(
             username,
-            startDate,
+            { month, year },
             page - 1,
             limit,
         );

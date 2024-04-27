@@ -44,18 +44,24 @@ export class PostgresTaskRepository implements TaskRepository {
      */
     async findMany(
         uid: string,
-        startDate: string,
+        { year, month }: { month: number; year: number },
         offset: number = 0,
         limit: number = 15,
     ): Promise<TaskDTO[]> {
         await TaskModel.sync();
 
-        const searchDate = new Date(startDate);
-        searchDate.setHours(0);
-        searchDate.setMinutes(0);
+        month -= 1; //jan must start at 0
+        const monthStart = new Date(year, month, 1);
+        const monthEnd = new Date(year, month + 1, 0);
+
+        monthStart.setHours(0);
+        monthEnd.setHours(24);
+
+        console.log(monthStart);
+        console.log(monthEnd);
 
         const tasks = await TaskModel.findAll({
-            where: { uid, startsAt: { [Op.gte]: searchDate } },
+            where: { uid, startsAt: { [Op.between]: [monthStart, monthEnd] } },
             order: ["startsAt"],
             offset: offset * limit,
             limit: limit,

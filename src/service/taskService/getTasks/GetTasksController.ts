@@ -9,7 +9,8 @@ export class GetTasksController {
     async handle(req: Request, res: Response) {
         try {
             // unpacking variables
-            const startDate = req.headers["startdate"] as string;
+            const month = req.headers["month"];
+            const year = req.headers["year"];
 
             const { page, limit } = req.query;
 
@@ -18,7 +19,10 @@ export class GetTasksController {
 
             const tasks = await this.getTasksService.execute(
                 uid,
-                startDate,
+                {
+                    month: Number(month),
+                    year: Number(year),
+                },
                 page ? Number(page) : undefined,
                 limit ? Number(limit) : undefined,
             );
