@@ -11,12 +11,14 @@ export class CreateTaskController {
         try {
             const task = req.body as TaskDTO;
             const uid = ApiUtils.getUserIdFromRequest(req);
-            await this.createTaskService.execute(uid, task);
+            const createdTask = await this.createTaskService.execute(uid, task);
 
             return res
                 .status(201)
                 .json(
-                    new ResponseEntity(true, "Task created successfully!", {}),
+                    new ResponseEntity(true, "Task created successfully!", {
+                        task: createdTask,
+                    }),
                 );
         } catch (e) {
             const error = e as Error;

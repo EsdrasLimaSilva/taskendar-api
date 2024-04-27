@@ -6,7 +6,7 @@ import { Op } from "sequelize";
 import { CreateTaskDTO } from "../../dto/CreateTaskDTO";
 
 export class PostgresTaskRepository implements TaskRepository {
-    async save(uid: string, task: CreateTaskDTO): Promise<void> {
+    async save(uid: string, task: CreateTaskDTO): Promise<TaskDTO> {
         await TaskModel.sync();
         const newTask: TaskDTO = { ...task, _id: uuid(), uid };
         await TaskModel.create({
@@ -14,6 +14,8 @@ export class PostgresTaskRepository implements TaskRepository {
             startsAt: new Date(task.startsAt),
             endsAt: new Date(task.endsAt),
         });
+
+        return newTask;
     }
 
     async findOne(taskId: string): Promise<TaskDTO | null> {
@@ -47,8 +49,13 @@ export class PostgresTaskRepository implements TaskRepository {
         limit: number = 15,
     ): Promise<TaskDTO[]> {
         await TaskModel.sync();
+
+        const searchDate = new Date(startDate);
+        searchDate.setHours(0);
+        searchDate.setMinutes(0);
+
         const tasks = await TaskModel.findAll({
-            where: { uid, startsAt: { [Op.gte]: new Date(startDate) } },
+            where: { uid, startsAt: { [Op.gte]: searchDate } },
             order: ["startsAt"],
             offset: offset * limit,
             limit: limit,

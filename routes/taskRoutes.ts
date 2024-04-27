@@ -29,7 +29,6 @@ taskRouter.post(
     },
 );
 
-//TODO: uid should be get by the auth token not in the url
 taskRouter.get(
     "/",
     header(["startDate"])

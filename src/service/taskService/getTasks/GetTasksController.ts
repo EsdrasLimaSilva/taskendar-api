@@ -24,7 +24,7 @@ export class GetTasksController {
             );
 
             res.status(200).json(
-                new ResponseEntity(true, "OK", { page, limit, data: tasks }),
+                new ResponseEntity(true, "OK", { page, limit, tasks: tasks }),
             );
         } catch (e) {
             const error = e as Error;
