@@ -36,8 +36,6 @@ taskRouter.get(
         .escape()
         .withMessage("headers must be informed"),
     (req: Request, res: Response) => {
-        console.log(">>>>>>>", req.headers);
-
         const result = validationResult(req);
         if (result.isEmpty()) return getTasksController.handle(req, res);
 
@@ -70,25 +68,8 @@ taskRouter.put(
     },
 );
 
-taskRouter.delete(
-    "/",
-    body(["taskId"])
-        .notEmpty()
-        .escape()
-        .withMessage("Field should not be empty"),
-    (req: Request, res: Response) => {
-        const result = validationResult(req);
-
-        if (result.isEmpty()) {
-            return deleteTaskController.handle(req, res);
-        }
-
-        return res.status(400).json(
-            new ResponseEntity(false, "All fields must be fullfield", {
-                errors: result.array(),
-            }),
-        );
-    },
-);
+taskRouter.delete("/:taskId", (req: Request, res: Response) => {
+    return deleteTaskController.handle(req, res);
+});
 
 export { taskRouter };

@@ -9,7 +9,7 @@ export class DeleteTaskController {
 
     async handle(req: Request, res: Response) {
         try {
-            const { taskId } = req.body as { taskId: string };
+            const { taskId } = req.params as { taskId: string };
             const uid = ApiUtils.getUserIdFromRequest(req);
 
             await this.deleteTaskService.execute(uid, taskId);

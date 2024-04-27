@@ -57,9 +57,6 @@ export class PostgresTaskRepository implements TaskRepository {
         monthStart.setHours(0);
         monthEnd.setHours(24);
 
-        console.log(monthStart);
-        console.log(monthEnd);
-
         const tasks = await TaskModel.findAll({
             where: { uid, startsAt: { [Op.between]: [monthStart, monthEnd] } },
             order: ["startsAt"],
