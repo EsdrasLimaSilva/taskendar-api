@@ -5,10 +5,16 @@ export interface TaskRepository {
     save(uid: string, task: CreateTaskDTO): Promise<TaskDTO>;
     findOne(taskId: string): Promise<TaskDTO | null>;
     findMany(
-        username: string,
+        uid: string,
         { year, month }: { month: number; year: number },
         offset: number,
         limit: number,
+    ): Promise<TaskDTO[]>;
+    findManyByQuery(
+        uid: string,
+        query: string,
+        offset?: number,
+        limit?: number,
     ): Promise<TaskDTO[]>;
     updateOne(uid: string, task: TaskDTO): Promise<TaskDTO>;
     deleteOne(uid: string, taskId: string): Promise<void>;

@@ -5,8 +5,31 @@ import { ResponseEntity } from "../src/utils/ResponseEntity";
 import { getTasksController } from "../src/service/taskService/getTasks";
 import { updateTaskController } from "../src/service/taskService/updateTask";
 import { deleteTaskController } from "../src/service/taskService/deleteTask";
+import { searchTasksController } from "../src/service/taskService/searchTasks";
 
 const taskRouter = Router();
+
+taskRouter.get(
+    "/",
+    header(["month", "year"])
+        .notEmpty()
+        .escape()
+        .withMessage("headers must be informed"),
+    (req: Request, res: Response) => {
+        const result = validationResult(req);
+        if (result.isEmpty()) return getTasksController.handle(req, res);
+
+        return res.status(400).json(
+            new ResponseEntity(false, "Invalid header", {
+                error: result.array(),
+            }),
+        );
+    },
+);
+
+taskRouter.get("/search/:query", (req, res) => {
+    return searchTasksController.handle(req, res);
+});
 
 taskRouter.post(
     "/",
@@ -24,24 +47,6 @@ taskRouter.post(
         return res.status(400).json(
             new ResponseEntity(false, "All fields must be fullfield", {
                 errors: result.array(),
-            }),
-        );
-    },
-);
-
-taskRouter.get(
-    "/",
-    header(["month", "year"])
-        .notEmpty()
-        .escape()
-        .withMessage("headers must be informed"),
-    (req: Request, res: Response) => {
-        const result = validationResult(req);
-        if (result.isEmpty()) return getTasksController.handle(req, res);
-
-        return res.status(400).json(
-            new ResponseEntity(false, "Invalid header", {
-                error: result.array(),
             }),
         );
     },
@@ -68,7 +73,7 @@ taskRouter.put(
     },
 );
 
-taskRouter.delete("/:taskId", (req: Request, res: Response) => {
+taskRouter.delete("/:taskId", (req, res) => {
     return deleteTaskController.handle(req, res);
 });
 

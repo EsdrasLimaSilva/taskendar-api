@@ -79,8 +79,44 @@ export class PostgresTaskRepository implements TaskRepository {
         return [...tasksDTO];
     }
 
+    async findManyByQuery(
+        uid: string,
+        query: string,
+        offset?: number | undefined,
+        limit?: number | undefined,
+    ): Promise<TaskDTO[]> {
+        await TaskModel.sync();
+
+        limit = limit || 20;
+        offset = (offset || 0) * limit;
+
+        const tasks = await TaskModel.findAll({
+            where: {
+                uid,
+                [Op.or]: [
+                    { title: { [Op.iLike]: `%${query}%` } },
+                    { description: { [Op.iLike]: `%${query}%` } },
+                ],
+            },
+        });
+
+        const tasksDTO = tasks.map(
+            (tsk) =>
+                new TaskDTO(
+                    tsk.getDataValue("uid"),
+                    tsk.getDataValue("title"),
+                    tsk.getDataValue("description"),
+                    tsk.getDataValue("startsAt"),
+                    tsk.getDataValue("endsAt"),
+                    tsk.getDataValue("_id"),
+                ),
+        );
+
+        return [...tasksDTO];
+    }
+
     async updateOne(uid: string, task: TaskDTO): Promise<TaskDTO> {
-        TaskModel.sync();
+        await TaskModel.sync();
 
         const tsk = await TaskModel.findByPk(task._id);
         if (!tsk) throw new Error("Task not found!");
