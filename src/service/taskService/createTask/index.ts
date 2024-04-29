@@ -1,9 +1,8 @@
-import { PostgresTaskRepository } from "../../../repository/imp/PostgresTaskRepository";
+import { taskRespoitory } from "../../../repository";
 import { CreateTaskController } from "./CreateTaskController";
 import { CreateTaskService } from "./CreateTaskService";
 
-const taskRepository = new PostgresTaskRepository();
-const createTaskService = new CreateTaskService(taskRepository);
+const createTaskService = new CreateTaskService(taskRespoitory);
 const createTaskController = new CreateTaskController(createTaskService);
 
 export { createTaskController };

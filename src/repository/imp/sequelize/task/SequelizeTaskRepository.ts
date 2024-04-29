@@ -1,15 +1,33 @@
+import { Op, Sequelize } from "sequelize";
 import { uuid } from "uuidv4";
-import { TaskDTO } from "../../dto/TaskDTO";
-import { TaskModel } from "../../model/TaskModel";
-import { TaskRepository } from "../TaskRepository";
-import { Op } from "sequelize";
-import { CreateTaskDTO } from "../../dto/CreateTaskDTO";
+import { CreateTaskDTO } from "../../../../dto/CreateTaskDTO";
+import { TaskDTO } from "../../../../dto/TaskDTO";
+import { TaskRepository } from "../../../TaskRepository";
+import { SequelizeUserModel } from "../user/SequelizeUserModel";
+import {
+    SequelizeTaskModel,
+    SequelizeTaskModelAttributes,
+} from "./SequelizeTaskModel";
 
-export class PostgresTaskRepository implements TaskRepository {
+export class SequelizeTasksRepository implements TaskRepository {
+    constructor(sequelize: Sequelize) {
+        // setting up
+        SequelizeTaskModel.init(SequelizeTaskModelAttributes, {
+            sequelize,
+            tableName: "task",
+        });
+        // defining the association
+        SequelizeTaskModel.belongsTo(SequelizeUserModel, {
+            foreignKey: {
+                name: "uid",
+            },
+        });
+    }
+
     async save(uid: string, task: CreateTaskDTO): Promise<TaskDTO> {
-        await TaskModel.sync();
+        await SequelizeTaskModel.sync();
         const newTask: TaskDTO = { ...task, _id: uuid(), uid };
-        await TaskModel.create({
+        await SequelizeTaskModel.create({
             ...newTask,
             startsAt: new Date(task.startsAt),
             endsAt: new Date(task.endsAt),
@@ -19,16 +37,16 @@ export class PostgresTaskRepository implements TaskRepository {
     }
 
     async findOne(taskId: string): Promise<TaskDTO | null> {
-        await TaskModel.sync();
-        const tsk = await TaskModel.findByPk(taskId);
+        await SequelizeTaskModel.sync();
+        const tsk = await SequelizeTaskModel.findByPk(taskId);
 
         return tsk
             ? new TaskDTO(
                   tsk.getDataValue("uid"),
                   tsk.getDataValue("title"),
-                  tsk.getDataValue("descripton"),
-                  tsk.getDataValue("startsAt"),
-                  tsk.getDataValue("endsAt"),
+                  tsk.getDataValue("description"),
+                  tsk.getDataValue("startsAt").toISOString(),
+                  tsk.getDataValue("endsAt").toISOString(),
                   tsk.getDataValue("_id"),
               )
             : null;
@@ -48,7 +66,7 @@ export class PostgresTaskRepository implements TaskRepository {
         offset: number = 0,
         limit: number = 15,
     ): Promise<TaskDTO[]> {
-        await TaskModel.sync();
+        await SequelizeTaskModel.sync();
 
         month -= 1; //jan must start at 0
         const monthStart = new Date(year, month, 1);
@@ -57,7 +75,7 @@ export class PostgresTaskRepository implements TaskRepository {
         monthStart.setHours(0);
         monthEnd.setHours(24);
 
-        const tasks = await TaskModel.findAll({
+        const tasks = await SequelizeTaskModel.findAll({
             where: { uid, startsAt: { [Op.between]: [monthStart, monthEnd] } },
             order: ["startsAt"],
             offset: offset * limit,
@@ -70,8 +88,8 @@ export class PostgresTaskRepository implements TaskRepository {
                     tsk.getDataValue("uid"),
                     tsk.getDataValue("title"),
                     tsk.getDataValue("description"),
-                    tsk.getDataValue("startsAt"),
-                    tsk.getDataValue("endsAt"),
+                    tsk.getDataValue("startsAt").toISOString(),
+                    tsk.getDataValue("endsAt").toISOString(),
                     tsk.getDataValue("_id"),
                 ),
         );
@@ -85,12 +103,12 @@ export class PostgresTaskRepository implements TaskRepository {
         offset?: number | undefined,
         limit?: number | undefined,
     ): Promise<TaskDTO[]> {
-        await TaskModel.sync();
+        await SequelizeTaskModel.sync();
 
         limit = limit || 20;
         offset = (offset || 0) * limit;
 
-        const tasks = await TaskModel.findAll({
+        const tasks = await SequelizeTaskModel.findAll({
             where: {
                 uid,
                 [Op.or]: [
@@ -106,8 +124,8 @@ export class PostgresTaskRepository implements TaskRepository {
                     tsk.getDataValue("uid"),
                     tsk.getDataValue("title"),
                     tsk.getDataValue("description"),
-                    tsk.getDataValue("startsAt"),
-                    tsk.getDataValue("endsAt"),
+                    tsk.getDataValue("startsAt").toISOString(),
+                    tsk.getDataValue("endsAt").toISOString(),
                     tsk.getDataValue("_id"),
                 ),
         );
@@ -116,29 +134,34 @@ export class PostgresTaskRepository implements TaskRepository {
     }
 
     async updateOne(uid: string, task: TaskDTO): Promise<TaskDTO> {
-        await TaskModel.sync();
+        await SequelizeTaskModel.sync();
 
-        const tsk = await TaskModel.findByPk(task._id);
+        const tsk = await SequelizeTaskModel.findByPk(task._id);
         if (!tsk) throw new Error("Task not found!");
 
-        const ownerId = await tsk.getDataValue("uid");
+        const ownerId = tsk.getDataValue("uid");
         if (uid !== ownerId)
             throw new Error("User not allowed to update the task!");
 
-        const updatedTask = await tsk.update({ ...task, uid });
+        const updatedTask = await tsk.update({
+            ...task,
+            uid,
+            startsAt: new Date(task.startsAt),
+            endsAt: new Date(task.endsAt),
+        });
 
         return new TaskDTO(
             updatedTask.getDataValue("uid"),
             updatedTask.getDataValue("title"),
             updatedTask.getDataValue("description"),
-            updatedTask.getDataValue("startsAt"),
-            updatedTask.getDataValue("endsAt"),
+            updatedTask.getDataValue("startsAt").toISOString(),
+            updatedTask.getDataValue("endsAt").toISOString(),
             updatedTask.getDataValue("_id"),
         );
     }
 
     async deleteOne(uid: string, taskId: string): Promise<void> {
-        const tsk = await TaskModel.findByPk(taskId);
+        const tsk = await SequelizeTaskModel.findByPk(taskId);
         if (!tsk) throw new Error("Task not found!");
 
         const ownerId = await tsk.getDataValue("uid");
