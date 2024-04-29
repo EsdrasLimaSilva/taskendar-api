@@ -1,19 +1,16 @@
 import { Request, Response } from "express";
+import { ApiUtils } from "../../../utils/ApiUtils";
 import { ResponseEntity } from "../../../utils/ResponseEntity";
 import { SearchTaskService } from "./SearchTasksService";
-import { ApiUtils } from "../../../utils/ApiUtils";
 
 export class SearchTasksController {
     constructor(private searchTasksService: SearchTaskService) {}
 
     async handle(req: Request, res: Response) {
         try {
-            console.log(">>>>> ", this.searchTasksService);
-
             const { query } = req.params;
             const uid = ApiUtils.getUserIdFromRequest(req);
 
-            console.log(">>>>> ", this.searchTasksService);
             const tasks = await this.searchTasksService.execute(uid, query);
 
             return res
