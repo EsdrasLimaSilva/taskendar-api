@@ -4,6 +4,7 @@ import { createTaskController } from "../src/service/taskService/createTask";
 import { deleteTaskController } from "../src/service/taskService/deleteTask";
 import { getTasksController } from "../src/service/taskService/getTasks";
 import { searchTasksController } from "../src/service/taskService/searchTasks";
+import { updateDoneStateController } from "../src/service/taskService/updateDoneState";
 import { updateTaskController } from "../src/service/taskService/updateTask";
 import { ResponseEntity } from "../src/utils/ResponseEntity";
 
@@ -63,6 +64,27 @@ taskRouter.put(
 
         if (result.isEmpty()) {
             return updateTaskController.handle(req, res);
+        }
+
+        return res.status(400).json(
+            new ResponseEntity(false, "All fields must be fullfield", {
+                errors: result.array(),
+            }),
+        );
+    },
+);
+
+taskRouter.patch(
+    "/",
+    body(["taskId", "done"])
+        .notEmpty()
+        .escape()
+        .withMessage("Fields Cannot be empty"),
+    (req: Request, res: Response) => {
+        const result = validationResult(req);
+
+        if (result.isEmpty()) {
+            return updateDoneStateController.handle(req, res);
         }
 
         return res.status(400).json(

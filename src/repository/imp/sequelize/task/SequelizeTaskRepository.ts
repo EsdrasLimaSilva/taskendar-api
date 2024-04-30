@@ -168,10 +168,23 @@ export class SequelizeTasksRepository implements TaskRepository {
         const tsk = await SequelizeTaskModel.findByPk(taskId);
         if (!tsk) throw new Error("Task not found!");
 
-        const ownerId = await tsk.getDataValue("uid");
+        const ownerId = tsk.getDataValue("uid");
         if (uid !== ownerId)
             throw new Error("User not allowed to update the task!");
 
         await tsk.destroy();
+    }
+
+    async changeOneDoneState(
+        uid: string,
+        taskId: string,
+        done: boolean,
+    ): Promise<void> {
+        await SequelizeTaskModel.sync();
+        const task = await SequelizeTaskModel.findByPk(taskId);
+        if (!task || task.getDataValue("uid") !== uid)
+            throw new Error("Task not found");
+
+        await task.update({ done });
     }
 }

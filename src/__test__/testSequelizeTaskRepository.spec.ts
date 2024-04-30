@@ -271,4 +271,26 @@ describe("Sequelize Task Repository", () => {
 
         expect(tasks).toHaveLength(2);
     });
+
+    it("Should mark one task as DONE", async () => {
+        const currentDate = new Date();
+
+        const task = await sequelizeTaskRepository.save(dummyUser._id, {
+            title: "new task 1 with QUERY",
+            description: "This task should appear in the search",
+            endsAt: currentDate.toISOString(),
+            startsAt: currentDate.toISOString(),
+            done: false,
+        });
+
+        await sequelizeTaskRepository.changeOneDoneState(
+            dummyUser._id,
+            task._id,
+            true,
+        );
+
+        const updatedTask = await sequelizeTaskRepository.findOne(task._id);
+
+        expect(updatedTask?.done).toBeTruthy();
+    });
 });

@@ -17,5 +17,10 @@ export interface TaskRepository {
         limit?: number,
     ): Promise<TaskDTO[]>;
     updateOne(uid: string, task: TaskDTO): Promise<TaskDTO>;
+    changeOneDoneState(
+        uid: string,
+        taskId: string,
+        done: boolean,
+    ): Promise<void>;
     deleteOne(uid: string, taskId: string): Promise<void>;
 }
