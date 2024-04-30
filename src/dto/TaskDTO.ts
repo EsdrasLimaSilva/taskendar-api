@@ -5,6 +5,7 @@ export class TaskDTO {
     public startsAt: string;
     public endsAt: string;
     public _id: string;
+    public done: boolean;
 
     constructor(
         uid: string,
@@ -13,6 +14,7 @@ export class TaskDTO {
         startsAt: string,
         endsAt: string,
         _id: string,
+        done: boolean,
     ) {
         this._id = _id;
         this.uid = uid;
@@ -20,5 +22,6 @@ export class TaskDTO {
         this.description = description;
         this.startsAt = startsAt;
         this.endsAt = endsAt;
+        this.done = done;
     }
 }

@@ -48,6 +48,7 @@ export class SequelizeTasksRepository implements TaskRepository {
                   tsk.getDataValue("startsAt").toISOString(),
                   tsk.getDataValue("endsAt").toISOString(),
                   tsk.getDataValue("_id"),
+                  tsk.getDataValue("done"),
               )
             : null;
     }
@@ -91,6 +92,7 @@ export class SequelizeTasksRepository implements TaskRepository {
                     tsk.getDataValue("startsAt").toISOString(),
                     tsk.getDataValue("endsAt").toISOString(),
                     tsk.getDataValue("_id"),
+                    tsk.getDataValue("done"),
                 ),
         );
 
@@ -127,6 +129,7 @@ export class SequelizeTasksRepository implements TaskRepository {
                     tsk.getDataValue("startsAt").toISOString(),
                     tsk.getDataValue("endsAt").toISOString(),
                     tsk.getDataValue("_id"),
+                    tsk.getDataValue("done"),
                 ),
         );
 
@@ -157,6 +160,7 @@ export class SequelizeTasksRepository implements TaskRepository {
             updatedTask.getDataValue("startsAt").toISOString(),
             updatedTask.getDataValue("endsAt").toISOString(),
             updatedTask.getDataValue("_id"),
+            tsk.getDataValue("done"),
         );
     }
 

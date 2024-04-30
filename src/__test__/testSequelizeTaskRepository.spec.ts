@@ -59,6 +59,7 @@ describe("Sequelize Task Repository", () => {
             description: "Dummy Description",
             endsAt: new Date().toISOString(),
             startsAt: new Date().toISOString(),
+            done: false,
         });
 
         expect(task.title).toBe("New Task");
@@ -71,6 +72,7 @@ describe("Sequelize Task Repository", () => {
             description: "Dummy Description",
             endsAt: new Date().toISOString(),
             startsAt: new Date().toISOString(),
+            done: false,
         });
 
         // creating the new task (with same id as the older one)
@@ -82,6 +84,7 @@ describe("Sequelize Task Repository", () => {
             endsAt: new Date().toISOString(),
             startsAt: new Date().toISOString(),
             uid: dummyUser._id,
+            done: false,
         };
 
         const updatedTask = await sequelizeTaskRepository.updateOne(
@@ -100,6 +103,7 @@ describe("Sequelize Task Repository", () => {
             description: "Dummy Description",
             endsAt: new Date().toISOString(),
             startsAt: new Date().toISOString(),
+            done: false,
         });
 
         // creating the new task (with same id as the older one)
@@ -111,6 +115,7 @@ describe("Sequelize Task Repository", () => {
             endsAt: new Date().toISOString(),
             startsAt: new Date().toISOString(),
             uid: dummyUser._id,
+            done: false,
         };
 
         expect(
@@ -129,6 +134,7 @@ describe("Sequelize Task Repository", () => {
             description: "Dummy Description",
             endsAt: new Date().toISOString(),
             startsAt: new Date().toISOString(),
+            done: false,
         });
 
         // creating the new task (with same id as the older one)
@@ -140,6 +146,7 @@ describe("Sequelize Task Repository", () => {
             endsAt: new Date().toISOString(),
             startsAt: new Date().toISOString(),
             uid: dummyUser._id,
+            done: false,
         };
 
         expect(
@@ -160,6 +167,7 @@ describe("Sequelize Task Repository", () => {
             description: "Dummy Description",
             endsAt: new Date().toISOString(),
             startsAt: new Date().toISOString(),
+            done: false,
         });
 
         // removing the task
@@ -183,6 +191,7 @@ describe("Sequelize Task Repository", () => {
             description: "Dummy Description",
             endsAt: new Date().toISOString(),
             startsAt: new Date().toISOString(),
+            done: false,
         });
 
         // trying to remove the task
@@ -208,6 +217,7 @@ describe("Sequelize Task Repository", () => {
             description: "Target Task Description",
             endsAt: targetTaskDate.toISOString(),
             startsAt: targetTaskDate.toISOString(),
+            done: false,
         });
 
         // inserting ignored task
@@ -216,6 +226,7 @@ describe("Sequelize Task Repository", () => {
             description: "Ignored Task Description",
             endsAt: ignDate.toISOString(),
             startsAt: ignDate.toISOString(),
+            done: false,
         });
 
         const tasks = await sequelizeTaskRepository.findMany(dummyUser._id, {
@@ -234,6 +245,7 @@ describe("Sequelize Task Repository", () => {
             description: "This task should appear in the search",
             endsAt: currentDate.toISOString(),
             startsAt: currentDate.toISOString(),
+            done: false,
         });
 
         await sequelizeTaskRepository.save(dummyUser._id, {
@@ -241,6 +253,7 @@ describe("Sequelize Task Repository", () => {
             description: "Task that has the query",
             endsAt: currentDate.toISOString(),
             startsAt: currentDate.toISOString(),
+            done: false,
         });
 
         await sequelizeTaskRepository.save(dummyUser._id, {
@@ -248,6 +261,7 @@ describe("Sequelize Task Repository", () => {
             description: "This task should no be returned",
             endsAt: currentDate.toISOString(),
             startsAt: currentDate.toISOString(),
+            done: false,
         });
 
         const tasks = await sequelizeTaskRepository.findManyByQuery(

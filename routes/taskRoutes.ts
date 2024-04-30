@@ -1,11 +1,11 @@
-import { Request, Response, Router, query } from "express";
-import { createTaskController } from "../src/service/taskService/createTask";
+import { Request, Response, Router } from "express";
 import { body, header, validationResult } from "express-validator";
-import { ResponseEntity } from "../src/utils/ResponseEntity";
-import { getTasksController } from "../src/service/taskService/getTasks";
-import { updateTaskController } from "../src/service/taskService/updateTask";
+import { createTaskController } from "../src/service/taskService/createTask";
 import { deleteTaskController } from "../src/service/taskService/deleteTask";
+import { getTasksController } from "../src/service/taskService/getTasks";
 import { searchTasksController } from "../src/service/taskService/searchTasks";
+import { updateTaskController } from "../src/service/taskService/updateTask";
+import { ResponseEntity } from "../src/utils/ResponseEntity";
 
 const taskRouter = Router();
 
@@ -33,7 +33,7 @@ taskRouter.get("/search/:query", (req, res) => {
 
 taskRouter.post(
     "/",
-    body(["title", "description", "startsAt", "endsAt"])
+    body(["title", "description", "startsAt", "endsAt", "done"])
         .notEmpty()
         .escape()
         .withMessage("Fields Cannot be empty"),
@@ -54,7 +54,7 @@ taskRouter.post(
 
 taskRouter.put(
     "/",
-    body(["_id", "title", "description", "startsAt", "endsAt"])
+    body(["_id", "title", "description", "startsAt", "endsAt", "done"])
         .notEmpty()
         .escape()
         .withMessage("Fields Cannot be empty"),

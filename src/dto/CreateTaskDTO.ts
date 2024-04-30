@@ -3,18 +3,19 @@ export class CreateTaskDTO {
     public description: string;
     public startsAt: string;
     public endsAt: string;
+    public done: boolean;
 
     constructor(
-        uid: string,
         title: string,
         description: string,
         startsAt: string,
         endsAt: string,
-        _id: string,
+        done: boolean,
     ) {
         this.title = title;
         this.description = description;
         this.startsAt = startsAt;
         this.endsAt = endsAt;
+        this.done = done;
     }
 }

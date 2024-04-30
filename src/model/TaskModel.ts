@@ -5,4 +5,5 @@ export interface TaskModel {
     description: string;
     startsAt: Date;
     endsAt: Date;
+    done: boolean;
 }

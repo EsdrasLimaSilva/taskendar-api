@@ -32,6 +32,12 @@ const SequelizeTaskModelAttributes: ModelAttributes<SequelizeTaskModel> = {
         type: DataTypes.DATE,
         allowNull: false,
     },
+
+    done: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
 };
 
 export { SequelizeTaskModel, SequelizeTaskModelAttributes };
