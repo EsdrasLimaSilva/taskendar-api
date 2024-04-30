@@ -10,6 +10,7 @@ import {
     SequelizeUserModel,
     SequelizeUserModelAttributes,
 } from "../repository/imp/sequelize/user/SequelizeUserModel";
+import { ApiUtils } from "../utils/ApiUtils";
 
 describe("Sequelize Task Repository", () => {
     jest.setTimeout(60000);
@@ -85,6 +86,8 @@ describe("Sequelize Task Repository", () => {
             startsAt: new Date().toISOString(),
             uid: dummyUser._id,
             done: false,
+            isHoliday: false,
+            holidayName: null,
         };
 
         const updatedTask = await sequelizeTaskRepository.updateOne(
@@ -116,6 +119,8 @@ describe("Sequelize Task Repository", () => {
             startsAt: new Date().toISOString(),
             uid: dummyUser._id,
             done: false,
+            isHoliday: false,
+            holidayName: null,
         };
 
         expect(
@@ -147,6 +152,8 @@ describe("Sequelize Task Repository", () => {
             startsAt: new Date().toISOString(),
             uid: dummyUser._id,
             done: false,
+            isHoliday: false,
+            holidayName: null,
         };
 
         expect(
@@ -292,5 +299,48 @@ describe("Sequelize Task Repository", () => {
         const updatedTask = await sequelizeTaskRepository.findOne(task._id);
 
         expect(updatedTask?.done).toBeTruthy();
+    });
+
+    it("Should CREATE a task when it's holiday", async () => {
+        const holidays = await ApiUtils.getHolidays(new Date().getFullYear());
+        const holidayDate = new Date(holidays[0].date);
+        holidayDate.setUTCHours(new Date().getUTCHours() - 3);
+
+        const task = await sequelizeTaskRepository.save(dummyUser._id, {
+            title: "New Task",
+            description: "Dummy Description",
+            endsAt: holidayDate.toISOString(),
+            startsAt: holidayDate.toISOString(),
+            done: false,
+        });
+
+        expect(task.isHoliday).toBeTruthy();
+    });
+
+    it("Should UPDATE a task when its new date it's a holiday", async () => {
+        const currentDate = new Date();
+
+        const oldTask = await sequelizeTaskRepository.save(dummyUser._id, {
+            title: "New Task",
+            description: "Dummy Description",
+            endsAt: currentDate.toISOString(),
+            startsAt: currentDate.toISOString(),
+            done: false,
+        });
+
+        const holidays = await ApiUtils.getHolidays(new Date().getFullYear());
+        const holidayDate = new Date(holidays[0].date);
+        holidayDate.setUTCHours(new Date().getUTCHours() - 3);
+
+        const updatedTask = await sequelizeTaskRepository.updateOne(
+            dummyUser._id,
+            {
+                ...oldTask,
+                endsAt: holidayDate.toISOString(),
+                startsAt: holidayDate.toISOString(),
+            },
+        );
+
+        expect(updatedTask.isHoliday).toBeTruthy();
     });
 });

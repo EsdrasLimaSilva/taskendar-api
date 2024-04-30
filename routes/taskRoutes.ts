@@ -34,10 +34,16 @@ taskRouter.get("/search/:query", (req, res) => {
 
 taskRouter.post(
     "/",
-    body(["title", "description", "startsAt", "endsAt", "done"])
+    body(["title", "description", "startsAt", "endsAt"])
         .notEmpty()
         .escape()
         .withMessage("Fields Cannot be empty"),
+    body("done")
+        .notEmpty()
+        .escape()
+        .isBoolean()
+        .toBoolean()
+        .withMessage("Done cannot be empty"),
     (req: Request, res: Response) => {
         const result = validationResult(req);
 
@@ -55,10 +61,16 @@ taskRouter.post(
 
 taskRouter.put(
     "/",
-    body(["_id", "title", "description", "startsAt", "endsAt", "done"])
+    body(["_id", "title", "description", "startsAt", "endsAt"])
         .notEmpty()
         .escape()
         .withMessage("Fields Cannot be empty"),
+    body("done")
+        .notEmpty()
+        .escape()
+        .isBoolean()
+        .toBoolean()
+        .withMessage("Done cannot be empty"),
     (req: Request, res: Response) => {
         const result = validationResult(req);
 
@@ -76,10 +88,13 @@ taskRouter.put(
 
 taskRouter.patch(
     "/",
-    body(["taskId", "done"])
+    body(["taskId"]).notEmpty().escape().withMessage("Fields Cannot be empty"),
+    body("done")
         .notEmpty()
         .escape()
-        .withMessage("Fields Cannot be empty"),
+        .isBoolean()
+        .toBoolean()
+        .withMessage("Done cannot be empty"),
     (req: Request, res: Response) => {
         const result = validationResult(req);
 

@@ -6,8 +6,8 @@ export class CreateTaskService {
     constructor(private taskRepository: TaskRepository) {}
 
     async execute(uid: string, task: CreateTaskDTO): Promise<TaskDTO> {
-        console.log(">>>>>>>>>>>>>", task);
         const createdTask = await this.taskRepository.save(uid, task);
+
         return createdTask;
     }
 }

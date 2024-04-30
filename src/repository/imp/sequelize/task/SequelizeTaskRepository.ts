@@ -2,6 +2,7 @@ import { Op, Sequelize } from "sequelize";
 import { uuid } from "uuidv4";
 import { CreateTaskDTO } from "../../../../dto/CreateTaskDTO";
 import { TaskDTO } from "../../../../dto/TaskDTO";
+import { ApiUtils } from "../../../../utils/ApiUtils";
 import { TaskRepository } from "../../../TaskRepository";
 import { SequelizeUserModel } from "../user/SequelizeUserModel";
 import {
@@ -25,8 +26,17 @@ export class SequelizeTasksRepository implements TaskRepository {
     }
 
     async save(uid: string, task: CreateTaskDTO): Promise<TaskDTO> {
+        // checking if it's holiday
+        const hday = await ApiUtils.checkHoliday(new Date(task.startsAt));
+
         await SequelizeTaskModel.sync();
-        const newTask: TaskDTO = { ...task, _id: uuid(), uid };
+        const newTask: TaskDTO = {
+            ...task,
+            _id: uuid(),
+            uid,
+            isHoliday: hday.isHoliday,
+            holidayName: hday.holidayName,
+        };
         await SequelizeTaskModel.create({
             ...newTask,
             startsAt: new Date(task.startsAt),
@@ -49,6 +59,8 @@ export class SequelizeTasksRepository implements TaskRepository {
                   tsk.getDataValue("endsAt").toISOString(),
                   tsk.getDataValue("_id"),
                   tsk.getDataValue("done"),
+                  tsk.getDataValue("isHoliday"),
+                  tsk.getDataValue("holidayName"),
               )
             : null;
     }
@@ -93,6 +105,8 @@ export class SequelizeTasksRepository implements TaskRepository {
                     tsk.getDataValue("endsAt").toISOString(),
                     tsk.getDataValue("_id"),
                     tsk.getDataValue("done"),
+                    tsk.getDataValue("isHoliday"),
+                    tsk.getDataValue("holidayName"),
                 ),
         );
 
@@ -130,6 +144,8 @@ export class SequelizeTasksRepository implements TaskRepository {
                     tsk.getDataValue("endsAt").toISOString(),
                     tsk.getDataValue("_id"),
                     tsk.getDataValue("done"),
+                    tsk.getDataValue("isHoliday"),
+                    tsk.getDataValue("holidayName"),
                 ),
         );
 
@@ -137,6 +153,9 @@ export class SequelizeTasksRepository implements TaskRepository {
     }
 
     async updateOne(uid: string, task: TaskDTO): Promise<TaskDTO> {
+        // checking if it's holiday
+        const hday = await ApiUtils.checkHoliday(new Date(task.startsAt));
+
         await SequelizeTaskModel.sync();
 
         const tsk = await SequelizeTaskModel.findByPk(task._id);
@@ -151,6 +170,8 @@ export class SequelizeTasksRepository implements TaskRepository {
             uid,
             startsAt: new Date(task.startsAt),
             endsAt: new Date(task.endsAt),
+            isHoliday: hday.isHoliday,
+            holidayName: hday.holidayName,
         });
 
         return new TaskDTO(
@@ -161,6 +182,8 @@ export class SequelizeTasksRepository implements TaskRepository {
             updatedTask.getDataValue("endsAt").toISOString(),
             updatedTask.getDataValue("_id"),
             tsk.getDataValue("done"),
+            tsk.getDataValue("isHoliday"),
+            tsk.getDataValue("holidayName"),
         );
     }
 

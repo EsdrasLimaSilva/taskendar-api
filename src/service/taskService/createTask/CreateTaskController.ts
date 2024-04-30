@@ -10,6 +10,7 @@ export class CreateTaskController {
     async handle(req: Request, res: Response) {
         try {
             const task = req.body as CreateTaskDTO;
+            console.log(">>>>>", task);
             const uid = ApiUtils.getUserIdFromRequest(req);
             const createdTask = await this.createTaskService.execute(uid, task);
 

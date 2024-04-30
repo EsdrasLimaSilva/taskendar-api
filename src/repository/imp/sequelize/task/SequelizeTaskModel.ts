@@ -38,6 +38,17 @@ const SequelizeTaskModelAttributes: ModelAttributes<SequelizeTaskModel> = {
         allowNull: false,
         defaultValue: false,
     },
+
+    isHoliday: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
+
+    holidayName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
 };
 
 export { SequelizeTaskModel, SequelizeTaskModelAttributes };

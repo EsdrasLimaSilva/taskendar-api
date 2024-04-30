@@ -6,4 +6,6 @@ export interface TaskModel {
     startsAt: Date;
     endsAt: Date;
     done: boolean;
+    isHoliday: boolean;
+    holidayName: string | null;
 }

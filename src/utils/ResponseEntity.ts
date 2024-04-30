@@ -9,3 +9,15 @@ export class ResponseEntity {
         this.data = data;
     }
 }
+
+export interface HolidayResponseType {
+    date: string;
+    localName: string;
+    name: string;
+    countryCode: string;
+    fixed: boolean;
+    global: boolean;
+    counties: Object;
+    launchYear: Object;
+    types: string[];
+}
